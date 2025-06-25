@@ -114,7 +114,8 @@ def rightvote_last_response(
 ):
     logger.info(f"rightvote (anony). ip: {get_ip(request)}")
     for x in vote_last_response(
-        [state0, state1], "rightvote", [model_selector0, model_selector1], request
+        [state0, state1], "rightvote", [
+            model_selector0, model_selector1], request
     ):
         yield x
 
@@ -134,7 +135,8 @@ def bothbad_vote_last_response(
 ):
     logger.info(f"bothbad_vote (anony). ip: {get_ip(request)}")
     for x in vote_last_response(
-        [state0, state1], "bothbad_vote", [model_selector0, model_selector1], request
+        [state0, state1], "bothbad_vote", [
+            model_selector0, model_selector1], request
     ):
         yield x
 
@@ -146,7 +148,8 @@ def regenerate(state0, state1, request: gr.Request):
         for i in range(num_sides):
             states[i].conv.update_last_message(None)
         return (
-            states + [x.to_gradio_chatbot() for x in states] + [""] + [disable_btn] * 6
+            states + [x.to_gradio_chatbot() for x in states] +
+            [""] + [disable_btn] * 6
         )
     states[0].skip_next = True
     states[1].skip_next = True
@@ -309,7 +312,8 @@ def add_text(
     all_conv_text_left = states[0].conv.get_prompt()
     all_conv_text_right = states[0].conv.get_prompt()
     all_conv_text = (
-        all_conv_text_left[-1000:] + all_conv_text_right[-1000:] + "\nuser: " + text
+        all_conv_text_left[-1000:] +
+        all_conv_text_right[-1000:] + "\nuser: " + text
     )
     flagged = moderation_filter(all_conv_text, model_list, do_moderation=True)
     if flagged:
@@ -319,7 +323,8 @@ def add_text(
 
     conv = states[0].conv
     if (len(conv.messages) - conv.offset) // 2 >= CONVERSATION_TURN_LIMIT:
-        logger.info(f"conversation turn limit. ip: {get_ip(request)}. text: {text}")
+        logger.info(
+            f"conversation turn limit. ip: {get_ip(request)}. text: {text}")
         for i in range(num_sides):
             states[i].skip_next = True
         return (
@@ -459,7 +464,6 @@ def bot_response_multi(
 # ## 👇 Chat now!
 # """
 
-
 def build_side_by_side_ui_anony(models):
     notice_markdown = f"""
 # ⚔️  BixArena: Free AI Chat to Compare & Test Best AI Chatbots for Biomedical Questions
@@ -484,7 +488,8 @@ def build_side_by_side_ui_anony(models):
             f"🔍 Expand to see the descriptions of {len(models)} models", open=False
         ):
             model_description_md = get_model_description_md(models)
-            gr.Markdown(model_description_md, elem_id="model_description_markdown")
+            gr.Markdown(model_description_md,
+                        elem_id="model_description_markdown")
         with gr.Row():
             for i in range(num_sides):
                 label = "Model A" if i == 0 else "Model B"
