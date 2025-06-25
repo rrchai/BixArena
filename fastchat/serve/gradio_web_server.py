@@ -143,16 +143,13 @@ class State:
         if len(system_prompt) == 0:
             return
         current_date = datetime.datetime.now().strftime("%Y-%m-%d")
-        system_prompt = system_prompt.replace(
-            "{{currentDateTime}}", current_date)
+        system_prompt = system_prompt.replace("{{currentDateTime}}", current_date)
 
         current_date_v2 = datetime.datetime.now().strftime("%d %b %Y")
-        system_prompt = system_prompt.replace(
-            "{{currentDateTimev2}}", current_date_v2)
+        system_prompt = system_prompt.replace("{{currentDateTimev2}}", current_date_v2)
 
         current_date_v3 = datetime.datetime.now().strftime("%B %Y")
-        system_prompt = system_prompt.replace(
-            "{{currentDateTimev3}}", current_date_v3)
+        system_prompt = system_prompt.replace("{{currentDateTimev3}}", current_date_v3)
         conv.set_system_message(system_prompt)
 
     def to_gradio_chatbot(self):
@@ -472,8 +469,7 @@ def bot_response(
         ret = is_limit_reached(state.model_name, ip)
         if ret is not None and ret["is_limit_reached"]:
             error_msg = RATE_LIMIT_MSG + "\n\n" + ret["reason"]
-            logger.info(
-                f"rate limit reached. ip: {ip}. error_msg: {ret['reason']}")
+            logger.info(f"rate limit reached. ip: {ip}. error_msg: {ret['reason']}")
             state.conv.update_last_message(error_msg)
             yield (state, state.to_gradio_chatbot()) + (no_change_btn,) * 5
             return
@@ -528,8 +524,7 @@ def bot_response(
         )
     else:
         # Remove system prompt for API-based models unless specified
-        custom_system_prompt = model_api_dict.get(
-            "custom_system_prompt", False)
+        custom_system_prompt = model_api_dict.get("custom_system_prompt", False)
         if not custom_system_prompt:
             conv.set_system_message("")
 
@@ -538,8 +533,7 @@ def bot_response(
         if use_recommended_config:
             recommended_config = model_api_dict.get("recommended_config", None)
             if recommended_config is not None:
-                temperature = recommended_config.get(
-                    "temperature", temperature)
+                temperature = recommended_config.get("temperature", temperature)
                 top_p = recommended_config.get("top_p", top_p)
                 max_new_tokens = recommended_config.get(
                     "max_new_tokens", max_new_tokens
@@ -584,8 +578,7 @@ def bot_response(
                 # conv.update_last_message(output + html_code)
                 yield (state, state.to_gradio_chatbot()) + (disable_btn,) * 5
             else:
-                output = data["text"] + \
-                    f"\n\n(error_code: {data['error_code']})"
+                output = data["text"] + f"\n\n(error_code: {data['error_code']})"
                 conv.update_last_message(output)
                 yield (state, state.to_gradio_chatbot()) + (
                     disable_btn,
@@ -929,8 +922,7 @@ def build_single_model_ui(models, add_promotion_links=False):
                 open=False,
             ):
                 model_description_md = get_model_description_md(models)
-                gr.Markdown(model_description_md,
-                            elem_id="model_description_markdown")
+                gr.Markdown(model_description_md, elem_id="model_description_markdown")
 
         chatbot = gr.Chatbot(
             elem_id="chatbot",
@@ -1012,8 +1004,7 @@ def build_single_model_ui(models, add_promotion_links=False):
     )
     clear_btn.click(clear_history, None, [state, chatbot, textbox] + btn_list)
 
-    model_selector.change(clear_history, None, [
-                          state, chatbot, textbox] + btn_list)
+    model_selector.change(clear_history, None, [state, chatbot, textbox] + btn_list)
 
     textbox.submit(
         add_text,
@@ -1048,8 +1039,7 @@ def build_demo(models):
         state, model_selector = build_single_model_ui(models)
 
         if args.model_list_mode not in ["once", "reload"]:
-            raise ValueError(
-                f"Unknown model list mode: {args.model_list_mode}")
+            raise ValueError(f"Unknown model list mode: {args.model_list_mode}")
 
         if args.show_terms_of_use:
             load_js = get_window_url_params_with_tos_js
@@ -1132,8 +1122,7 @@ if __name__ == "__main__":
     logger.info(f"args: {args}")
 
     # Set global variables
-    set_global_vars(args.controller_url, args.moderate,
-                    args.use_remote_storage)
+    set_global_vars(args.controller_url, args.moderate, args.use_remote_storage)
     models, all_models = get_model_list(
         args.controller_url, args.register_api_endpoint_file, vision_arena=False
     )
