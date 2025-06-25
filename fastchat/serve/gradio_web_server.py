@@ -66,33 +66,35 @@ controller_url = None
 enable_moderation = False
 use_remote_storage = False
 
-acknowledgment_md = """
-### Terms of Service
+acknowledgment_md = ""
 
-Users are required to agree to the following terms before using the service:
+# acknowledgment_md = """
+# ### Terms of Service
 
-The service is a research preview. It only provides limited safety measures and may generate offensive content.
-It must not be used for any illegal, harmful, violent, racist, or sexual purposes.
-Please do not upload any private information.
-The service collects user dialogue data, including both text and images, and reserves the right to distribute it under a Creative Commons Attribution (CC-BY) or a similar license.
+# Users are required to agree to the following terms before using the service:
 
-#### Please report any bug or issue to our [Discord](https://discord.gg/6GXcFg3TH8)/arena-feedback.
+# The service is a research preview. It only provides limited safety measures and may generate offensive content.
+# It must not be used for any illegal, harmful, violent, racist, or sexual purposes.
+# Please do not upload any private information.
+# The service collects user dialogue data, including both text and images, and reserves the right to distribute it under a Creative Commons Attribution (CC-BY) or a similar license.
 
-### Acknowledgment
-We thank [UC Berkeley SkyLab](https://sky.cs.berkeley.edu/), [Kaggle](https://www.kaggle.com/), [MBZUAI](https://mbzuai.ac.ae/), [a16z](https://www.a16z.com/), [Together AI](https://www.together.ai/), [Hyperbolic](https://hyperbolic.xyz/), [RunPod](https://runpod.io), [Anyscale](https://www.anyscale.com/), [HuggingFace](https://huggingface.co/) for their generous [sponsorship](https://lmsys.org/donations/).
+# #### Please report any bug or issue to our [Discord](https://discord.gg/6GXcFg3TH8)/arena-feedback.
 
-<div class="sponsor-image-about">
-    <img src="https://storage.googleapis.com/public-arena-asset/skylab.png" alt="SkyLab">
-    <img src="https://storage.googleapis.com/public-arena-asset/kaggle.png" alt="Kaggle">
-    <img src="https://storage.googleapis.com/public-arena-asset/mbzuai.jpeg" alt="MBZUAI">
-    <img src="https://storage.googleapis.com/public-arena-asset/a16z.jpeg" alt="a16z">
-    <img src="https://storage.googleapis.com/public-arena-asset/together.png" alt="Together AI">
-    <img src="https://storage.googleapis.com/public-arena-asset/hyperbolic_logo.png" alt="Hyperbolic">
-    <img src="https://storage.googleapis.com/public-arena-asset/runpod-logo.jpg" alt="RunPod">
-    <img src="https://storage.googleapis.com/public-arena-asset/anyscale.png" alt="AnyScale">
-    <img src="https://storage.googleapis.com/public-arena-asset/huggingface.png" alt="HuggingFace">
-</div>
-"""
+# ### Acknowledgment
+# We thank [UC Berkeley SkyLab](https://sky.cs.berkeley.edu/), [Kaggle](https://www.kaggle.com/), [MBZUAI](https://mbzuai.ac.ae/), [a16z](https://www.a16z.com/), [Together AI](https://www.together.ai/), [Hyperbolic](https://hyperbolic.xyz/), [RunPod](https://runpod.io), [Anyscale](https://www.anyscale.com/), [HuggingFace](https://huggingface.co/) for their generous [sponsorship](https://lmsys.org/donations/).
+
+# <div class="sponsor-image-about">
+#     <img src="https://storage.googleapis.com/public-arena-asset/skylab.png" alt="SkyLab">
+#     <img src="https://storage.googleapis.com/public-arena-asset/kaggle.png" alt="Kaggle">
+#     <img src="https://storage.googleapis.com/public-arena-asset/mbzuai.jpeg" alt="MBZUAI">
+#     <img src="https://storage.googleapis.com/public-arena-asset/a16z.jpeg" alt="a16z">
+#     <img src="https://storage.googleapis.com/public-arena-asset/together.png" alt="Together AI">
+#     <img src="https://storage.googleapis.com/public-arena-asset/hyperbolic_logo.png" alt="Hyperbolic">
+#     <img src="https://storage.googleapis.com/public-arena-asset/runpod-logo.jpg" alt="RunPod">
+#     <img src="https://storage.googleapis.com/public-arena-asset/anyscale.png" alt="AnyScale">
+#     <img src="https://storage.googleapis.com/public-arena-asset/huggingface.png" alt="HuggingFace">
+# </div>
+# """
 
 # JSON file format of API-based models:
 # {
@@ -141,13 +143,16 @@ class State:
         if len(system_prompt) == 0:
             return
         current_date = datetime.datetime.now().strftime("%Y-%m-%d")
-        system_prompt = system_prompt.replace("{{currentDateTime}}", current_date)
+        system_prompt = system_prompt.replace(
+            "{{currentDateTime}}", current_date)
 
         current_date_v2 = datetime.datetime.now().strftime("%d %b %Y")
-        system_prompt = system_prompt.replace("{{currentDateTimev2}}", current_date_v2)
+        system_prompt = system_prompt.replace(
+            "{{currentDateTimev2}}", current_date_v2)
 
         current_date_v3 = datetime.datetime.now().strftime("%B %Y")
-        system_prompt = system_prompt.replace("{{currentDateTimev3}}", current_date_v3)
+        system_prompt = system_prompt.replace(
+            "{{currentDateTimev3}}", current_date_v3)
         conv.set_system_message(system_prompt)
 
     def to_gradio_chatbot(self):
@@ -467,7 +472,8 @@ def bot_response(
         ret = is_limit_reached(state.model_name, ip)
         if ret is not None and ret["is_limit_reached"]:
             error_msg = RATE_LIMIT_MSG + "\n\n" + ret["reason"]
-            logger.info(f"rate limit reached. ip: {ip}. error_msg: {ret['reason']}")
+            logger.info(
+                f"rate limit reached. ip: {ip}. error_msg: {ret['reason']}")
             state.conv.update_last_message(error_msg)
             yield (state, state.to_gradio_chatbot()) + (no_change_btn,) * 5
             return
@@ -522,7 +528,8 @@ def bot_response(
         )
     else:
         # Remove system prompt for API-based models unless specified
-        custom_system_prompt = model_api_dict.get("custom_system_prompt", False)
+        custom_system_prompt = model_api_dict.get(
+            "custom_system_prompt", False)
         if not custom_system_prompt:
             conv.set_system_message("")
 
@@ -531,7 +538,8 @@ def bot_response(
         if use_recommended_config:
             recommended_config = model_api_dict.get("recommended_config", None)
             if recommended_config is not None:
-                temperature = recommended_config.get("temperature", temperature)
+                temperature = recommended_config.get(
+                    "temperature", temperature)
                 top_p = recommended_config.get("top_p", top_p)
                 max_new_tokens = recommended_config.get(
                     "max_new_tokens", max_new_tokens
@@ -576,7 +584,8 @@ def bot_response(
                 # conv.update_last_message(output + html_code)
                 yield (state, state.to_gradio_chatbot()) + (disable_btn,) * 5
             else:
-                output = data["text"] + f"\n\n(error_code: {data['error_code']})"
+                output = data["text"] + \
+                    f"\n\n(error_code: {data['error_code']})"
                 conv.update_last_message(output)
                 yield (state, state.to_gradio_chatbot()) + (
                     disable_btn,
@@ -920,7 +929,8 @@ def build_single_model_ui(models, add_promotion_links=False):
                 open=False,
             ):
                 model_description_md = get_model_description_md(models)
-                gr.Markdown(model_description_md, elem_id="model_description_markdown")
+                gr.Markdown(model_description_md,
+                            elem_id="model_description_markdown")
 
         chatbot = gr.Chatbot(
             elem_id="chatbot",
@@ -1002,7 +1012,8 @@ def build_single_model_ui(models, add_promotion_links=False):
     )
     clear_btn.click(clear_history, None, [state, chatbot, textbox] + btn_list)
 
-    model_selector.change(clear_history, None, [state, chatbot, textbox] + btn_list)
+    model_selector.change(clear_history, None, [
+                          state, chatbot, textbox] + btn_list)
 
     textbox.submit(
         add_text,
@@ -1037,7 +1048,8 @@ def build_demo(models):
         state, model_selector = build_single_model_ui(models)
 
         if args.model_list_mode not in ["once", "reload"]:
-            raise ValueError(f"Unknown model list mode: {args.model_list_mode}")
+            raise ValueError(
+                f"Unknown model list mode: {args.model_list_mode}")
 
         if args.show_terms_of_use:
             load_js = get_window_url_params_with_tos_js
@@ -1120,7 +1132,8 @@ if __name__ == "__main__":
     logger.info(f"args: {args}")
 
     # Set global variables
-    set_global_vars(args.controller_url, args.moderate, args.use_remote_storage)
+    set_global_vars(args.controller_url, args.moderate,
+                    args.use_remote_storage)
     models, all_models = get_model_list(
         args.controller_url, args.register_api_endpoint_file, vision_arena=False
     )
