@@ -114,7 +114,8 @@ def rightvote_last_response(
 ):
     logger.info(f"rightvote (anony). ip: {get_ip(request)}")
     for x in vote_last_response(
-        [state0, state1], "rightvote", [model_selector0, model_selector1], request
+        [state0, state1], "rightvote", [
+            model_selector0, model_selector1], request
     ):
         yield x
 
@@ -134,7 +135,8 @@ def bothbad_vote_last_response(
 ):
     logger.info(f"bothbad_vote (anony). ip: {get_ip(request)}")
     for x in vote_last_response(
-        [state0, state1], "bothbad_vote", [model_selector0, model_selector1], request
+        [state0, state1], "bothbad_vote", [
+            model_selector0, model_selector1], request
     ):
         yield x
 
@@ -146,7 +148,8 @@ def regenerate(state0, state1, request: gr.Request):
         for i in range(num_sides):
             states[i].conv.update_last_message(None)
         return (
-            states + [x.to_gradio_chatbot() for x in states] + [""] + [disable_btn] * 6
+            states + [x.to_gradio_chatbot() for x in states] +
+            [""] + [disable_btn] * 6
         )
     states[0].skip_next = True
     states[1].skip_next = True
@@ -309,7 +312,8 @@ def add_text(
     all_conv_text_left = states[0].conv.get_prompt()
     all_conv_text_right = states[0].conv.get_prompt()
     all_conv_text = (
-        all_conv_text_left[-1000:] + all_conv_text_right[-1000:] + "\nuser: " + text
+        all_conv_text_left[-1000:] +
+        all_conv_text_right[-1000:] + "\nuser: " + text
     )
     flagged = moderation_filter(all_conv_text, model_list, do_moderation=True)
     if flagged:
@@ -319,7 +323,8 @@ def add_text(
 
     conv = states[0].conv
     if (len(conv.messages) - conv.offset) // 2 >= CONVERSATION_TURN_LIMIT:
-        logger.info(f"conversation turn limit. ip: {get_ip(request)}. text: {text}")
+        logger.info(
+            f"conversation turn limit. ip: {get_ip(request)}. text: {text}")
         for i in range(num_sides):
             states[i].skip_next = True
         return (
@@ -438,27 +443,40 @@ def bot_response_multi(
             break
 
 
+# def build_side_by_side_ui_anony(models):
+#     notice_markdown = f"""
+# # ⚔️  Chatbot Arena (formerly LMSYS): Free AI Chat to Compare & Test Best AI Chatbots
+# [Blog](https://blog.lmarena.ai/blog/2023/arena/) | [GitHub](https://github.com/lm-sys/FastChat) | [Paper](https://arxiv.org/abs/2403.04132) | [Dataset](https://github.com/lm-sys/FastChat/blob/main/docs/dataset_release.md) | [Twitter](https://twitter.com/lmsysorg) | [Discord](https://discord.gg/6GXcFg3TH8) | [Kaggle Competition](https://www.kaggle.com/competitions/lmsys-chatbot-arena)
+
+# {SURVEY_LINK}
+
+# ## 📣 News
+# - Chatbot Arena now supports images in beta. Check it out [here](https://lmarena.ai/?vision).
+
+# ## 📜 How It Works
+# - **Blind Test**: Ask any question to two anonymous AI chatbots (ChatGPT, Gemini, Claude, Llama, and more).
+# - **Vote for the Best**: Choose the best response. You can keep chatting until you find a winner.
+# - **Play Fair**: If AI identity reveals, your vote won't count.
+
+# ## 🏆 Chatbot Arena LLM [Leaderboard](https://lmarena.ai/leaderboard)
+# - Backed by over **1,000,000+** community votes, our platform ranks the best LLM and AI chatbots. Explore the top AI models on our LLM [leaderboard](https://lmarena.ai/leaderboard)!
+
+# ## 👇 Chat now!
+# """
+
 def build_side_by_side_ui_anony(models):
     notice_markdown = f"""
-# ⚔️  Chatbot Arena (formerly LMSYS): Free AI Chat to Compare & Test Best AI Chatbots
-[Blog](https://blog.lmarena.ai/blog/2023/arena/) | [GitHub](https://github.com/lm-sys/FastChat) | [Paper](https://arxiv.org/abs/2403.04132) | [Dataset](https://github.com/lm-sys/FastChat/blob/main/docs/dataset_release.md) | [Twitter](https://twitter.com/lmsysorg) | [Discord](https://discord.gg/6GXcFg3TH8) | [Kaggle Competition](https://www.kaggle.com/competitions/lmsys-chatbot-arena)
-
-{SURVEY_LINK}
-
-## 📣 News
-- Chatbot Arena now supports images in beta. Check it out [here](https://lmarena.ai/?vision).
+# ⚔️  BixArena: Free AI Chat to Compare & Test Best AI Chatbots for Biomedical Questions
 
 ## 📜 How It Works
 - **Blind Test**: Ask any question to two anonymous AI chatbots (ChatGPT, Gemini, Claude, Llama, and more).
 - **Vote for the Best**: Choose the best response. You can keep chatting until you find a winner.
 - **Play Fair**: If AI identity reveals, your vote won't count.
 
-## 🏆 Chatbot Arena LLM [Leaderboard](https://lmarena.ai/leaderboard)
-- Backed by over **1,000,000+** community votes, our platform ranks the best LLM and AI chatbots. Explore the top AI models on our LLM [leaderboard](https://lmarena.ai/leaderboard)!
+## 🏆 [Leaderboard]()
 
 ## 👇 Chat now!
 """
-
     states = [gr.State() for _ in range(num_sides)]
     model_selectors = [None] * num_sides
     chatbots = [None] * num_sides
@@ -470,7 +488,8 @@ def build_side_by_side_ui_anony(models):
             f"🔍 Expand to see the descriptions of {len(models)} models", open=False
         ):
             model_description_md = get_model_description_md(models)
-            gr.Markdown(model_description_md, elem_id="model_description_markdown")
+            gr.Markdown(model_description_md,
+                        elem_id="model_description_markdown")
         with gr.Row():
             for i in range(num_sides):
                 label = "Model A" if i == 0 else "Model B"
