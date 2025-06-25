@@ -204,19 +204,19 @@ window.__gradio_mode__ = "app";
                         context,
                         random_questions=args.random_questions,
                     )
-                with gr.Tab("⚔️ Arena (side-by-side)", id=1) as side_by_side_tab:
-                    side_by_side_tab.select(None, None, None, js=alert_js)
-                    side_by_side_named_list = build_side_by_side_vision_ui_named(
-                        context, random_questions=args.random_questions
-                    )
+                # with gr.Tab("⚔️ Arena (side-by-side)", id=1) as side_by_side_tab:
+                #     side_by_side_tab.select(None, None, None, js=alert_js)
+                #     side_by_side_named_list = build_side_by_side_vision_ui_named(
+                #         context, random_questions=args.random_questions
+                #     )
 
-                with gr.Tab("💬 Direct Chat", id=2) as direct_tab:
-                    direct_tab.select(None, None, None, js=alert_js)
-                    single_model_list = build_single_vision_language_model_ui(
-                        context,
-                        add_promotion_links=True,
-                        random_questions=args.random_questions,
-                    )
+                # with gr.Tab("💬 Direct Chat", id=2) as direct_tab:
+                #     direct_tab.select(None, None, None, js=alert_js)
+                #     single_model_list = build_single_vision_language_model_ui(
+                #         context,
+                #         add_promotion_links=True,
+                #         random_questions=args.random_questions,
+                #     )
 
             else:
                 with gr.Tab("⚔️ Arena (battle)", id=0) as arena_tab:
@@ -225,44 +225,45 @@ window.__gradio_mode__ = "app";
                         context.all_text_models
                     )
 
-                with gr.Tab("⚔️ Arena (side-by-side)", id=1) as side_by_side_tab:
-                    side_by_side_tab.select(None, None, None, js=alert_js)
-                    side_by_side_named_list = build_side_by_side_ui_named(
-                        context.text_models
-                    )
+                # with gr.Tab("⚔️ Arena (side-by-side)", id=1) as side_by_side_tab:
+                #     side_by_side_tab.select(None, None, None, js=alert_js)
+                #     side_by_side_named_list = build_side_by_side_ui_named(
+                #         context.text_models
+                #     )
 
-                with gr.Tab("💬 Direct Chat", id=2) as direct_tab:
-                    direct_tab.select(None, None, None, js=alert_js)
-                    single_model_list = build_single_model_ui(
-                        context.text_models, add_promotion_links=True
-                    )
+                # with gr.Tab("💬 Direct Chat", id=2) as direct_tab:
+                #     direct_tab.select(None, None, None, js=alert_js)
+                #     single_model_list = build_single_model_ui(
+                #         context.text_models, add_promotion_links=True
+                #     )
 
             demo_tabs = (
                 [inner_tabs]
                 + side_by_side_anony_list
-                + side_by_side_named_list
-                + single_model_list
+                # + side_by_side_named_list
+                # + single_model_list
             )
 
-            if elo_results_file:
-                with gr.Tab("🏆 Leaderboard", id=3):
-                    build_leaderboard_tab(
-                        elo_results_file,
-                        leaderboard_table_file,
-                        arena_hard_table,
-                        show_plot=True,
-                    )
-            if args.show_visualizer:
-                with gr.Tab("🔍 Arena Visualizer", id=5):
-                    build_visualizer()
+            # if elo_results_file:
+            #     with gr.Tab("🏆 Leaderboard", id=3):
+            #         build_leaderboard_tab(
+            #             elo_results_file,
+            #             leaderboard_table_file,
+            #             arena_hard_table,
+            #             show_plot=True,
+            #         )
+            # if args.show_visualizer:
+            #     with gr.Tab("🔍 Arena Visualizer", id=5):
+            #         build_visualizer()
 
-            with gr.Tab("ℹ️ About Us", id=4):
-                build_about()
+            # with gr.Tab("ℹ️ About Us", id=4):
+            #     build_about()
 
         context_state = gr.State(context)
 
         if args.model_list_mode not in ["once", "reload"]:
-            raise ValueError(f"Unknown model list mode: {args.model_list_mode}")
+            raise ValueError(
+                f"Unknown model list mode: {args.model_list_mode}")
 
         demo.load(
             load_demo,
@@ -372,7 +373,8 @@ if __name__ == "__main__":
     logger.info(f"args: {args}")
 
     # Set global variables
-    set_global_vars(args.controller_url, args.moderate, args.use_remote_storage)
+    set_global_vars(args.controller_url, args.moderate,
+                    args.use_remote_storage)
     set_global_vars_named(args.moderate)
     set_global_vars_anony(args.moderate)
     text_models, all_text_models = get_model_list(
