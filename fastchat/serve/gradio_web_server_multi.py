@@ -262,8 +262,7 @@ window.__gradio_mode__ = "app";
         context_state = gr.State(context)
 
         if args.model_list_mode not in ["once", "reload"]:
-            raise ValueError(
-                f"Unknown model list mode: {args.model_list_mode}")
+            raise ValueError(f"Unknown model list mode: {args.model_list_mode}")
 
         demo.load(
             load_demo,
@@ -373,8 +372,7 @@ if __name__ == "__main__":
     logger.info(f"args: {args}")
 
     # Set global variables
-    set_global_vars(args.controller_url, args.moderate,
-                    args.use_remote_storage)
+    set_global_vars(args.controller_url, args.moderate, args.use_remote_storage)
     set_global_vars_named(args.moderate)
     set_global_vars_anony(args.moderate)
     text_models, all_text_models = get_model_list(

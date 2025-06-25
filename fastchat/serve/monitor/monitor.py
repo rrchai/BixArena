@@ -370,9 +370,7 @@ def update_leaderboard_df(arena_table_vals):
             (
                 "color: green; font-weight: bold"
                 if v > 0
-                else "color: red; font-weight: bold"
-                if v < 0
-                else ""
+                else "color: red; font-weight: bold" if v < 0 else ""
             )
             for v in s
         ]
@@ -478,9 +476,9 @@ def build_arena_tab(
         arena_values = get_arena_table(
             arena_df,
             model_table_df,
-            arena_subset_df=arena_subset_df
-            if category != "Overall"
-            else arena_overall_sc_df,
+            arena_subset_df=(
+                arena_subset_df if category != "Overall" else arena_overall_sc_df
+            ),
             hidden_models=(
                 None
                 if len(filters) > 0 and "Show Deprecated" in filters
