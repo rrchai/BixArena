@@ -9,6 +9,7 @@ import re
 
 import gradio as gr
 import numpy as np
+from fastchat.serve.synapse_utils import submit_vote_to_synapse
 
 from fastchat.constants import (
     MODERATION_MSG,
@@ -81,6 +82,13 @@ def vote_last_response(states, vote_type, model_selectors, request: gr.Request):
         }
         fout.write(json.dumps(data) + "\n")
     get_remote_logger().log(data)
+
+    try:
+        submit_vote_to_synapse(
+            model_a=states[0].model_name, model_b=states[1].model_name, vote=vote_type
+        )
+    except Exception as e:
+        logger.warning(f"[Synapse vote submit fail] {e}")
 
     gr.Info(
         "🎉 Thanks for voting! Your vote shapes the leaderboard, please vote RESPONSIBLY."
@@ -474,7 +482,7 @@ def build_side_by_side_ui_anony(models):
 - **Vote for the Best**: Choose the best response. You can keep chatting until you find a winner.
 - **Play Fair**: If AI identity reveals, your vote won't count.
 
-## 🏆 [Leaderboard]()
+## 🏆 [Leaderboard](https://www.synapse.org/Synapse:syn68561482/tables/)
 
 ## 👇 Chat now!
 """

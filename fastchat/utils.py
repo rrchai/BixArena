@@ -178,7 +178,7 @@ def moderation_filter(text, model_list, do_moderation=False):
     # Apply moderation for below models
     MODEL_KEYWORDS = [
         "claude",
-        "gpt",
+        # "gpt",
         "bard",
         "mistral-large",
         "command-r",
