@@ -57,6 +57,10 @@ def load_demo_side_by_side_anony(models_, url_params):
     global models
     models = models_
 
+    # Temperarily fix: assign uniform weights to all models
+    for model in models:
+        SAMPLING_WEIGHTS[model] = 1.0
+
     states = [None] * num_sides
     selector_updates = [
         gr.Markdown(visible=True),
@@ -311,7 +315,8 @@ def add_text(
     all_conv_text = (
         all_conv_text_left[-1000:] + all_conv_text_right[-1000:] + "\nuser: " + text
     )
-    flagged = moderation_filter(all_conv_text, model_list, do_moderation=True)
+    # Temperarily fix: disable moderation
+    flagged = moderation_filter(all_conv_text, model_list, do_moderation=False)
     if flagged:
         logger.info(f"violate moderation (anony). ip: {ip}. text: {text}")
         # overwrite the original text
