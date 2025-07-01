@@ -9,7 +9,8 @@ def submit_vote_to_synapse(model_a, model_b, vote, table_id="syn68561482"):
     try:
         schema = syn.get(table_id)
         print(
-            f"[submit_vote_to_synapse] model_a={model_a}, model_b={model_b}, vote={vote}")
+            f"[submit_vote_to_synapse] model_a={model_a}, model_b={model_b}, vote={vote}"
+        )
 
         row = [model_a, model_b, vote]
 

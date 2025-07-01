@@ -105,16 +105,14 @@ class StreamToLogger(object):
             # By default sys.stdout.write() expects '\n' newlines and then
             # translates them so this is still cross platform.
             if line[-1] == "\n":
-                encoded_message = line.encode(
-                    "utf-8", "ignore").decode("utf-8")
+                encoded_message = line.encode("utf-8", "ignore").decode("utf-8")
                 self.logger.log(self.log_level, encoded_message.rstrip())
             else:
                 self.linebuf += line
 
     def flush(self):
         if self.linebuf != "":
-            encoded_message = self.linebuf.encode(
-                "utf-8", "ignore").decode("utf-8")
+            encoded_message = self.linebuf.encode("utf-8", "ignore").decode("utf-8")
             self.logger.log(self.log_level, encoded_message.rstrip())
         self.linebuf = ""
 
@@ -322,8 +320,7 @@ def parse_gradio_auth_creds(filename: str):
     gradio_auth_creds = []
     with open(filename, "r", encoding="utf8") as file:
         for line in file.readlines():
-            gradio_auth_creds += [x.strip()
-                                  for x in line.split(",") if x.strip()]
+            gradio_auth_creds += [x.strip() for x in line.split(",") if x.strip()]
     if gradio_auth_creds:
         auth = [tuple(cred.split(":")) for cred in gradio_auth_creds]
     else:
@@ -445,13 +442,11 @@ def get_image_file_from_gcs(filename):
 
 
 def image_moderation_request(image_bytes, endpoint, api_key):
-    headers = {"Content-Type": "image/jpeg",
-               "Ocp-Apim-Subscription-Key": api_key}
+    headers = {"Content-Type": "image/jpeg", "Ocp-Apim-Subscription-Key": api_key}
 
     MAX_RETRIES = 3
     for _ in range(MAX_RETRIES):
-        response = requests.post(
-            endpoint, headers=headers, data=image_bytes).json()
+        response = requests.post(endpoint, headers=headers, data=image_bytes).json()
         try:
             if response["Status"]["Code"] == 3000:
                 break
