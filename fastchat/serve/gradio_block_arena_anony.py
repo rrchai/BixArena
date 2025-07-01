@@ -438,27 +438,41 @@ def bot_response_multi(
             break
 
 
+# def build_side_by_side_ui_anony(models):
+#     notice_markdown = f"""
+# # ⚔️  Chatbot Arena (formerly LMSYS): Free AI Chat to Compare & Test Best AI Chatbots
+# [Blog](https://blog.lmarena.ai/blog/2023/arena/) | [GitHub](https://github.com/lm-sys/FastChat) | [Paper](https://arxiv.org/abs/2403.04132) | [Dataset](https://github.com/lm-sys/FastChat/blob/main/docs/dataset_release.md) | [Twitter](https://twitter.com/lmsysorg) | [Discord](https://discord.gg/6GXcFg3TH8) | [Kaggle Competition](https://www.kaggle.com/competitions/lmsys-chatbot-arena)
+
+# {SURVEY_LINK}
+
+# ## 📣 News
+# - Chatbot Arena now supports images in beta. Check it out [here](https://lmarena.ai/?vision).
+
+# ## 📜 How It Works
+# - **Blind Test**: Ask any question to two anonymous AI chatbots (ChatGPT, Gemini, Claude, Llama, and more).
+# - **Vote for the Best**: Choose the best response. You can keep chatting until you find a winner.
+# - **Play Fair**: If AI identity reveals, your vote won't count.
+
+# ## 🏆 Chatbot Arena LLM [Leaderboard](https://lmarena.ai/leaderboard)
+# - Backed by over **1,000,000+** community votes, our platform ranks the best LLM and AI chatbots. Explore the top AI models on our LLM [leaderboard](https://lmarena.ai/leaderboard)!
+
+# ## 👇 Chat now!
+# """
+
+
 def build_side_by_side_ui_anony(models):
     notice_markdown = f"""
-# ⚔️  Chatbot Arena (formerly LMSYS): Free AI Chat to Compare & Test Best AI Chatbots
-[Blog](https://blog.lmarena.ai/blog/2023/arena/) | [GitHub](https://github.com/lm-sys/FastChat) | [Paper](https://arxiv.org/abs/2403.04132) | [Dataset](https://github.com/lm-sys/FastChat/blob/main/docs/dataset_release.md) | [Twitter](https://twitter.com/lmsysorg) | [Discord](https://discord.gg/6GXcFg3TH8) | [Kaggle Competition](https://www.kaggle.com/competitions/lmsys-chatbot-arena)
-
-{SURVEY_LINK}
-
-## 📣 News
-- Chatbot Arena now supports images in beta. Check it out [here](https://lmarena.ai/?vision).
+# ⚔️  BixArena: Free AI Chat to Compare & Test Best AI Chatbots for Biomedical Questions
 
 ## 📜 How It Works
 - **Blind Test**: Ask any question to two anonymous AI chatbots (ChatGPT, Gemini, Claude, Llama, and more).
 - **Vote for the Best**: Choose the best response. You can keep chatting until you find a winner.
 - **Play Fair**: If AI identity reveals, your vote won't count.
 
-## 🏆 Chatbot Arena LLM [Leaderboard](https://lmarena.ai/leaderboard)
-- Backed by over **1,000,000+** community votes, our platform ranks the best LLM and AI chatbots. Explore the top AI models on our LLM [leaderboard](https://lmarena.ai/leaderboard)!
+## 🏆 [Leaderboard]()
 
 ## 👇 Chat now!
 """
-
     states = [gr.State() for _ in range(num_sides)]
     model_selectors = [None] * num_sides
     chatbots = [None] * num_sides
