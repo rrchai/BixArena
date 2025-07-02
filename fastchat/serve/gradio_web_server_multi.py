@@ -5,6 +5,9 @@ It supports chatting with a single model or chatting with two models side-by-sid
 
 import argparse
 import gradio as gr
+from fastapi import FastAPI
+import uvicorn
+from fastchat.serve.synapse_auth import router as auth_router
 
 from fastchat.serve.gradio_block_arena_anony import (
     build_side_by_side_ui_anony,
@@ -53,14 +56,14 @@ logger = build_logger("gradio_web_server_multi", "gradio_web_server_multi.log")
 def build_visualizer():
     visualizer_markdown = """
     # 🔍 Arena Visualizer
-    Arena visualizer provides interactive tools to explore and draw insights from our leaderboard data. 
+    Arena visualizer provides interactive tools to explore and draw insights from our leaderboard data.
     """
     gr.Markdown(visualizer_markdown, elem_id="visualizer_markdown")
     with gr.Tabs():
         with gr.Tab("Topic Explorer", id=0):
-            topic_markdown = """ 
-            This tool provides an interactive way to explore how people are using Chatbot Arena. 
-            Using *[topic clustering](https://github.com/MaartenGr/BERTopic)*, we organized user-submitted prompts from Arena battles into broad and specific categories. 
+            topic_markdown = """
+            This tool provides an interactive way to explore how people are using Chatbot Arena.
+            Using *[topic clustering](https://github.com/MaartenGr/BERTopic)*, we organized user-submitted prompts from Arena battles into broad and specific categories.
             Dive in to uncover insights about the distribution and themes of these prompts! """
             gr.Markdown(topic_markdown)
             expandText = (
@@ -70,7 +73,7 @@ def build_visualizer():
                 instructions = """
                 - Hover Over Segments: View the category name, the number of prompts, and their percentage.
                     - *On mobile devices*: Tap instead of hover.
-                - Click to Explore: 
+                - Click to Explore:
                     - Click on a main category to see its subcategories.
                     - Click on subcategories to see example prompts in the sidebar.
                 - Undo and Reset: Click the center of the chart to return to the top level.
@@ -108,6 +111,7 @@ def build_visualizer():
 
 
 def load_demo(context: Context, request: gr.Request):
+
     ip = get_ip(request)
     logger.info(f"load_demo. ip: {ip}. params: {request.query_params}")
 
@@ -196,6 +200,40 @@ window.__gradio_mode__ = "app";
         css=block_css,
         head=head_js,
     ) as demo:
+
+        with gr.Row():
+            login_html = gr.HTML(
+                '<a href="/login/synapse" style="display: inline-block; padding: 10px 16px; background-color: #4CAF50; color: white; border-radius: 4px; text-decoration: none;">🔐 Login with Synapse</a>',
+                visible=True,
+            )
+            logout_html = gr.HTML(
+                '<a href="/logout" style="display: inline-block; padding: 10px 16px; background-color: #f44336; color: white; border-radius: 4px; text-decoration: none;">🚪 Logout</a>',
+                visible=False,
+            )
+            welcome_text = gr.Markdown("", visible=False)
+
+        def check_login(request: gr.Request):
+            cookies = request.cookies
+            username = cookies.get("synapse_username")
+            if cookies.get("synapse_logged_in") == "true" and username:
+                return (
+                    gr.update(visible=False),
+                    gr.update(visible=True),
+                    gr.update(value=f"👋 Welcome, {username}!", visible=True),
+                )
+            else:
+                return (
+                    gr.update(visible=True),
+                    gr.update(visible=False),
+                    gr.update(visible=False),
+                )
+
+        demo.load(
+            fn=check_login,
+            inputs=None,
+            outputs=[login_html, logout_html, welcome_text],
+        )
+
         with gr.Tabs() as inner_tabs:
             if args.vision_arena:
                 with gr.Tab("⚔️ Arena (battle)", id=0) as arena_tab:
@@ -262,14 +300,16 @@ window.__gradio_mode__ = "app";
         context_state = gr.State(context)
 
         if args.model_list_mode not in ["once", "reload"]:
-            raise ValueError(f"Unknown model list mode: {args.model_list_mode}")
+            raise ValueError(
+                f"Unknown model list mode: {args.model_list_mode}")
 
-        demo.load(
-            load_demo,
-            [context_state],
-            demo_tabs,
-            js=load_js,
-        )
+        # demo.load(
+        #     load_demo,
+        #     [context_state],
+        #     demo_tabs,
+        #     js=load_js,
+        # )
+        demo.load(None)
 
     return demo
 
@@ -372,7 +412,8 @@ if __name__ == "__main__":
     logger.info(f"args: {args}")
 
     # Set global variables
-    set_global_vars(args.controller_url, args.moderate, args.use_remote_storage)
+    set_global_vars(args.controller_url, args.moderate,
+                    args.use_remote_storage)
     set_global_vars_named(args.moderate)
     set_global_vars_anony(args.moderate)
     text_models, all_text_models = get_model_list(
@@ -414,16 +455,26 @@ if __name__ == "__main__":
         args.leaderboard_table_file,
         args.arena_hard_table,
     )
-    demo.queue(
-        default_concurrency_limit=args.concurrency_count,
-        status_update_rate=10,
-        api_open=False,
-    ).launch(
-        server_name=args.host,
-        server_port=args.port,
-        share=args.share,
-        max_threads=200,
-        auth=auth,
-        root_path=args.gradio_root_path,
-        show_api=False,
-    )
+    # demo.queue(
+    #     default_concurrency_limit=args.concurrency_count,
+    #     status_update_rate=10,
+    #     api_open=False,
+    # ).launch(
+    #     server_name=args.host,
+    #     server_port=args.port,
+    #     share=args.share,
+    #     max_threads=200,
+    #     auth=auth,
+    #     root_path=args.gradio_root_path,
+    #     show_api=False,
+    # )
+
+    # Create FastAPI app and register OAuth routes
+    app = FastAPI()
+    app.include_router(auth_router)
+
+    # Mount Gradio app at "/"
+    app = gr.mount_gradio_app(app, demo, path="")
+
+    # Launch with uvicorn
+    uvicorn.run(app, host=args.host, port=args.port)
